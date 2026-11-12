@@ -50,9 +50,6 @@ java CifrasYLetras
 
 ## Integrantes del proyecto
 
-- **Integrante 1:** Nombre y apellidos.
-- **Integrante 2:** Nombre y apellidos.
+- **Integrante 1:** Javier Paredes Domínguez
+- **Integrante 2:** Lucas Conejero Lopez
 
-## Lenguaje utilizado
-
-El proyecto está desarrollado en **Java**.
