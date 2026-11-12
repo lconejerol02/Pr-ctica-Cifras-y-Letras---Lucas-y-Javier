@@ -44,40 +44,36 @@ public class CifrasYLetras {
     // 2. FUNCION PRINCIPAL
     // =====================================================
 
-    public static void main(String[] args) {
 
-        int opcion;
+public static void main(String[] args) {
 
-        do {
-            mostrarMenuPrincipal();
-            opcion = leerEntero("Selecciona una opcion: ");
+    int opcion;
 
-            switch (opcion) {
+    do {
+        mostrarMenuPrincipal();
+        opcion = leerEntero("Selecciona una opcion: ");
 
-                case 1:
-                    jugarModoConcurso();
-                    break;
+        if (opcion == 1) {
+            jugarModoConcurso();
 
-                case 2:
-                    jugarModoRapido();
-                    break;
+        } else if (opcion == 2) {
+            jugarModoRapido();
 
-                case 3:
-                    mostrarConfiguracion();
-                    break;
+        } else if (opcion == 3) {
+            mostrarConfiguracion();
 
-                case 4:
-                    System.out.println("\nGracias por jugar a CIFRAS Y LETRAS.");
-                    break;
+        } else if (opcion == 4) {
+            System.out.println("\nGracias por jugar a CIFRAS Y LETRAS.");
 
-                default:
-                    System.out.println("Opcion incorrecta. Intentalo de nuevo.");
-            }
+        } else {
+            System.out.println("Opcion incorrecta. Intentalo de nuevo.");
+        }
 
-        } while (opcion != 4);
+    } while (opcion != 4);
 
-        teclado.close();
-    }
+    teclado.close();
+}
+
 
 
     // =====================================================
@@ -560,46 +556,46 @@ public class CifrasYLetras {
 
     // Comprobar que una palabra puede formarse con las letras disponibles
 
-    static boolean puedeFormarse(String palabra, char[] letras) {
 
-        String palabraNormalizada = normalizarPalabra(palabra);
+static boolean puedeFormarse(String palabra, char[] letras) {
 
-        boolean[] utilizadas = new boolean[letras.length];
+    String palabraNormalizada = normalizarPalabra(palabra);
 
-        if (palabraNormalizada.length() > letras.length) {
+    boolean[] utilizadas = new boolean[letras.length];
+
+    if (palabraNormalizada.length() > letras.length) {
+        return false;
+    }
+
+    for (int i = 0; i < palabraNormalizada.length(); i++) {
+
+        char letra = palabraNormalizada.charAt(i);
+
+        boolean encontrada = false;
+
+        // Buscar una letra disponible que coincida
+        for (int j = 0; j < letras.length && !encontrada; j++) {
+
+            char letraDisponible = normalizarPalabra(
+                String.valueOf(letras[j])
+            ).charAt(0);
+
+            if (letra == letraDisponible && !utilizadas[j]) {
+
+                utilizadas[j] = true;
+
+                encontrada = true;
+            }
+        }
+
+        if (!encontrada) {
             return false;
         }
-
-        for (int i = 0; i < palabraNormalizada.length(); i++) {
-
-            char letra = palabraNormalizada.charAt(i);
-
-            boolean encontrada = false;
-
-            // Buscar una letra disponible que coincida
-            for (int j = 0; j < letras.length; j++) {
-
-                char letraDisponible = normalizarPalabra(
-                    String.valueOf(letras[j])
-                ).charAt(0);
-
-                if (letra == letraDisponible && !utilizadas[j]) {
-
-                    utilizadas[j] = true;
-
-                    encontrada = true;
-
-                    break;
-                }
-            }
-
-            if (!encontrada) {
-                return false;
-            }
-        }
-
-        return true;
     }
+
+    return true;
+}
+
 
 
     // Normalizar palabras: mayusculas y vocales sin tilde
@@ -749,30 +745,25 @@ public class CifrasYLetras {
 
     // Mostrar la operacion correspondiente
 
-    static void mostrarOperacion(
-            int operacion,
-            double numero,
-            int valor) {
 
-        switch (operacion) {
+static void mostrarOperacion(
+        int operacion,
+        double numero,
+        int valor) {
 
-            case 1:
-                System.out.println(numero + " + " + valor);
-                break;
+    if (operacion == 1) {
+        System.out.println(numero + " + " + valor);
 
-            case 2:
-                System.out.println(numero + " - " + valor);
-                break;
+    } else if (operacion == 2) {
+        System.out.println(numero + " - " + valor);
 
-            case 3:
-                System.out.println(numero + " * " + valor);
-                break;
+    } else if (operacion == 3) {
+        System.out.println(numero + " * " + valor);
 
-            case 4:
-                System.out.println(numero + " / " + valor);
-                break;
-        }
+    } else if (operacion == 4) {
+        System.out.println(numero + " / " + valor);
     }
+}
 
 
     // =====================================================
@@ -930,43 +921,41 @@ public class CifrasYLetras {
 
     // Calcular una operacion matematica sin entrada ni salida
 
-    static double calcularOperacion(
-            double numero1,
-            double numero2,
-            int operacion) {
 
-        double resultado = 0;
+static double calcularOperacion(
+        double numero1,
+        double numero2,
+        int operacion) {
 
-        switch (operacion) {
+    double resultado = 0;
 
-            case 1:
-                resultado = numero1 + numero2;
-                break;
+    if (operacion == 1) {
 
-            case 2:
-                resultado = numero1 - numero2;
-                break;
+        resultado = numero1 + numero2;
 
-            case 3:
-                resultado = numero1 * numero2;
-                break;
+    } else if (operacion == 2) {
 
-            case 4:
+        resultado = numero1 - numero2;
 
-                if (numero2 != 0) {
+    } else if (operacion == 3) {
 
-                    resultado = numero1 / numero2;
+        resultado = numero1 * numero2;
 
-                } else {
+    } else if (operacion == 4) {
 
-                    throw new ArithmeticException("Division entre cero.");
-                }
+        if (numero2 != 0) {
 
-                break;
+            resultado = numero1 / numero2;
+
+        } else {
+
+            throw new ArithmeticException("Division entre cero.");
         }
-
-        return resultado;
     }
+
+    return resultado;
+}
+
 
 
     // Generar un numero aleatorio entre dos valores incluidos
@@ -991,92 +980,82 @@ public class CifrasYLetras {
             System.out.println("            CONFIGURACION");
             System.out.println("======================================");
 
-            System.out.println("1. Cambiar repeticiones de las pruebas");
-            System.out.println("2. Cambiar cantidad de letras");
-            System.out.println("3. Cambiar cantidad de operaciones");
-            System.out.println("4. Ver configuracion actual");
-            System.out.println("5. Volver al menu principal");
 
-            opcion = leerEntero("Selecciona una opcion: ");
+System.out.println("1. Cambiar repeticiones de las pruebas");
+System.out.println("2. Cambiar cantidad de letras");
+System.out.println("3. Cambiar cantidad de operaciones");
+System.out.println("4. Ver configuracion actual");
+System.out.println("5. Volver al menu principal");
 
-            switch (opcion) {
+opcion = leerEntero("Selecciona una opcion: ");
 
-                case 1:
+if (opcion == 1) {
 
-                    int nuevasRepeticiones = leerEntero(
-                        "Numero de repeticiones (1-10): "
-                    );
+    int nuevasRepeticiones = leerEntero(
+        "Numero de repeticiones (1-10): "
+    );
 
-                    if (nuevasRepeticiones >= 1
-                            && nuevasRepeticiones <= 10) {
+    if (nuevasRepeticiones >= 1
+            && nuevasRepeticiones <= 10) {
 
-                        repeticiones = nuevasRepeticiones;
+        repeticiones = nuevasRepeticiones;
 
-                        System.out.println("Configuracion actualizada.");
+        System.out.println("Configuracion actualizada.");
 
-                    } else {
+    } else {
 
-                        System.out.println("Valor incorrecto. Debe estar entre 1 y 10.");
-                    }
-
-                    break;
-
-                case 2:
-
-                    int nuevasLetras = leerEntero(
-                        "Cantidad de letras (8-20): "
-                    );
-
-                    if (nuevasLetras >= 8 && nuevasLetras <= 20) {
-
-                        cantidadLetras = nuevasLetras;
-
-                        System.out.println("Configuracion actualizada.");
-
-                    } else {
-
-                        System.out.println("Valor incorrecto. Debe estar entre 8 y 20.");
-                    }
-
-                    break;
-
-                case 3:
-
-                    int nuevasOperaciones = leerEntero(
-                        "Cantidad de operaciones (1-10): "
-                    );
-
-                    if (nuevasOperaciones >= 1
-                            && nuevasOperaciones <= 10) {
-
-                        cantidadOperaciones = nuevasOperaciones;
-
-                        System.out.println("Configuracion actualizada.");
-
-                    } else {
-
-                        System.out.println("Valor incorrecto. Debe estar entre 1 y 10.");
-                    }
-
-                    break;
-
-                case 4:
-
-                    mostrarValoresConfiguracion();
-                    break;
-
-                case 5:
-
-                    System.out.println("Volviendo al menu principal.");
-                    break;
-
-                default:
-
-                    System.out.println("Opcion incorrecta.");
-            }
-
-        } while (opcion != 5);
+        System.out.println("Valor incorrecto. Debe estar entre 1 y 10.");
     }
+
+} else if (opcion == 2) {
+
+    int nuevasLetras = leerEntero(
+        "Cantidad de letras (8-20): "
+    );
+
+    if (nuevasLetras >= 8 && nuevasLetras <= 20) {
+
+        cantidadLetras = nuevasLetras;
+
+        System.out.println("Configuracion actualizada.");
+
+    } else {
+
+        System.out.println("Valor incorrecto. Debe estar entre 8 y 20.");
+    }
+
+} else if (opcion == 3) {
+
+    int nuevasOperaciones = leerEntero(
+        "Cantidad de operaciones (1-10): "
+    );
+
+    if (nuevasOperaciones >= 1
+            && nuevasOperaciones <= 10) {
+
+        cantidadOperaciones = nuevasOperaciones;
+
+        System.out.println("Configuracion actualizada.");
+
+    } else {
+
+        System.out.println("Valor incorrecto. Debe estar entre 1 y 10.");
+    }
+
+} else if (opcion == 4) {
+
+    mostrarValoresConfiguracion();
+
+} else if (opcion == 5) {
+
+    System.out.println("Volviendo al menu principal.");
+
+} else {
+
+    System.out.println("Opcion incorrecta.");
+}
+
+} while (opcion != 5);
 
 
     // Mostrar la configuracion actual
