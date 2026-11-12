@@ -1056,7 +1056,7 @@ if (opcion == 1) {
 }
 
 } while (opcion != 5);
-
+}
 
     // Mostrar la configuracion actual
 
