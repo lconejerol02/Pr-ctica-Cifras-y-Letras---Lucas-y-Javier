@@ -1,0 +1,1256 @@
+
+import java.util.Random;
+import java.util.Scanner;
+import java.text.Normalizer;
+
+public class CifrasYLetras {
+
+    // =====================================================
+    // 1. VARIABLES GLOBALES
+    // =====================================================
+
+    static Scanner teclado = new Scanner(System.in);
+    static Random aleatorio = new Random();
+
+    // Jugadores
+    static String jugador1 = "Jugador 1";
+    static String jugador2 = "Jugador 2";
+
+    // Marcadores globales
+    static int puntosGlobalesJ1 = 0;
+    static int puntosGlobalesJ2 = 0;
+
+    // Configuracion
+    static int repeticiones = 1;
+    static int cantidadLetras = 10;
+    static int cantidadOperaciones = 5;
+
+    // Marcadores de la prueba actual
+    static int puntosPruebaJ1 = 0;
+    static int puntosPruebaJ2 = 0;
+
+    // Constantes
+    static final int NUM_PRUEBAS = 4;
+
+    static final String[] nombresPruebas = {
+        "La cifra exacta",
+        "La palabra mas larga",
+        "La calculadora humana",
+        "Orden expres"
+    };
+
+
+    // =====================================================
+    // 2. FUNCION PRINCIPAL
+    // =====================================================
+
+    public static void main(String[] args) {
+
+        int opcion;
+
+        do {
+            mostrarMenuPrincipal();
+            opcion = leerEntero("Selecciona una opcion: ");
+
+            switch (opcion) {
+
+                case 1:
+                    jugarModoConcurso();
+                    break;
+
+                case 2:
+                    jugarModoRapido();
+                    break;
+
+                case 3:
+                    mostrarConfiguracion();
+                    break;
+
+                case 4:
+                    System.out.println("\nGracias por jugar a CIFRAS Y LETRAS.");
+                    break;
+
+                default:
+                    System.out.println("Opcion incorrecta. Intentalo de nuevo.");
+            }
+
+        } while (opcion != 4);
+
+        teclado.close();
+    }
+
+
+    // =====================================================
+    // 3. MENU PRINCIPAL
+    // =====================================================
+
+    static void mostrarMenuPrincipal() {
+
+        System.out.println("\n======================================");
+        System.out.println("          CIFRAS Y LETRAS");
+        System.out.println("======================================");
+        System.out.println("1. Modo concurso");
+        System.out.println("2. Modo rapido");
+        System.out.println("3. Configuracion");
+        System.out.println("4. Salir");
+        System.out.println("======================================");
+    }
+
+
+    // =====================================================
+    // 4. MODO CONCURSO
+    // =====================================================
+
+    static void jugarModoConcurso() {
+
+        puntosGlobalesJ1 = 0;
+        puntosGlobalesJ2 = 0;
+
+        System.out.println("\n======================================");
+        System.out.println("           MODO CONCURSO");
+        System.out.println("======================================");
+
+        System.out.println("Participantes:");
+        System.out.println(jugador1);
+        System.out.println(jugador2);
+
+        // Se realizan todas las pruebas
+        for (int prueba = 0; prueba < NUM_PRUEBAS; prueba++) {
+
+            puntosPruebaJ1 = 0;
+            puntosPruebaJ2 = 0;
+
+            System.out.println("\n**************************************");
+            System.out.println("PRUEBA: " + nombresPruebas[prueba]);
+            System.out.println("**************************************");
+
+            // Cada prueba se repite las veces configuradas
+            for (int ronda = 1; ronda <= repeticiones; ronda++) {
+
+                System.out.println("\nRONDA " + ronda + " DE " + repeticiones);
+
+                int[] resultado = ejecutarPrueba(prueba);
+
+                puntosPruebaJ1 += resultado[0];
+                puntosPruebaJ2 += resultado[1];
+
+                mostrarMarcadorPrueba();
+            }
+
+            // Se determina el ganador de la prueba
+            System.out.println("\nRESULTADO FINAL DE LA PRUEBA:");
+
+            if (puntosPruebaJ1 > puntosPruebaJ2) {
+
+                System.out.println("Gana " + jugador1);
+                puntosGlobalesJ1++;
+
+            } else if (puntosPruebaJ2 > puntosPruebaJ1) {
+
+                System.out.println("Gana " + jugador2);
+                puntosGlobalesJ2++;
+
+            } else {
+
+                System.out.println("Empate. Ningun jugador suma puntos.");
+            }
+
+            mostrarMarcadorGlobal();
+        }
+
+        // Resultado final del concurso
+        mostrarResultadoConcurso();
+    }
+
+
+    // =====================================================
+    // 5. MODO RAPIDO
+    // =====================================================
+
+    static void jugarModoRapido() {
+
+        System.out.println("\n======================================");
+        System.out.println("             MODO RAPIDO");
+        System.out.println("======================================");
+
+        for (int i = 0; i < NUM_PRUEBAS; i++) {
+            System.out.println((i + 1) + ". " + nombresPruebas[i]);
+        }
+
+        int opcion;
+
+        do {
+            opcion = leerEntero("Selecciona una prueba: ");
+
+            if (opcion < 1 || opcion > NUM_PRUEBAS) {
+                System.out.println("Selecciona una opcion entre 1 y 4.");
+            }
+
+        } while (opcion < 1 || opcion > NUM_PRUEBAS);
+
+        int pruebaSeleccionada = opcion - 1;
+
+        puntosPruebaJ1 = 0;
+        puntosPruebaJ2 = 0;
+
+        for (int ronda = 1; ronda <= repeticiones; ronda++) {
+
+            System.out.println("\nRONDA " + ronda + " DE " + repeticiones);
+
+            int[] resultado = ejecutarPrueba(pruebaSeleccionada);
+
+            puntosPruebaJ1 += resultado[0];
+            puntosPruebaJ2 += resultado[1];
+
+            mostrarMarcadorPrueba();
+        }
+
+        System.out.println("\n======================================");
+        System.out.println("         RESULTADO MODO RAPIDO");
+        System.out.println("======================================");
+
+        if (puntosPruebaJ1 > puntosPruebaJ2) {
+
+            System.out.println("GANADOR: " + jugador1);
+
+        } else if (puntosPruebaJ2 > puntosPruebaJ1) {
+
+            System.out.println("GANADOR: " + jugador2);
+
+        } else {
+
+            System.out.println("LA PARTIDA HA TERMINADO EN EMPATE.");
+        }
+
+    }
+
+
+    // =====================================================
+    // 6. EJECUCION DE LAS PRUEBAS
+    // =====================================================
+
+    static int[] ejecutarPrueba(int numeroPrueba) {
+
+        int[] resultado = new int[2];
+
+        switch (numeroPrueba) {
+
+            case 0:
+                resultado = pruebaCifraExacta();
+                break;
+
+            case 1:
+                resultado = pruebaPalabraMasLarga();
+                break;
+
+            case 2:
+                resultado = pruebaCalculadoraHumana();
+                break;
+
+            case 3:
+                resultado = pruebaOrdenExpres();
+                break;
+        }
+
+        return resultado;
+    }
+
+
+    // =====================================================
+    // 7. PRUEBA 1: LA CIFRA EXACTA
+    // =====================================================
+
+    static int[] pruebaCifraExacta() {
+
+        System.out.println("\n======================================");
+        System.out.println("          LA CIFRA EXACTA");
+        System.out.println("======================================");
+
+        // Generar numero objetivo
+        int objetivo = generarNumero(100, 999);
+
+        // Generar seis numeros auxiliares
+        int[] numeros = new int[6];
+
+        for (int i = 0; i < numeros.length; i++) {
+            numeros[i] = generarNumero(1, 10);
+        }
+
+        System.out.println("Numero objetivo: " + objetivo);
+
+        System.out.print("Numeros disponibles: ");
+
+        for (int i = 0; i < numeros.length; i++) {
+            System.out.print(numeros[i] + " ");
+        }
+
+        System.out.println("\n");
+
+        // Turno del primer jugador
+        System.out.println("Turno de " + jugador1);
+
+        double resultadoJ1 = jugarCifra(numeros);
+
+        System.out.println("\nTurno de " + jugador2);
+
+        double resultadoJ2 = jugarCifra(numeros);
+
+        // Calcular diferencias
+        double diferenciaJ1 = Math.abs(objetivo - resultadoJ1);
+        double diferenciaJ2 = Math.abs(objetivo - resultadoJ2);
+
+        System.out.println("\nRESULTADOS:");
+
+        System.out.println(jugador1 + ": " + resultadoJ1);
+        System.out.println(jugador2 + ": " + resultadoJ2);
+
+        System.out.println("Objetivo: " + objetivo);
+
+        System.out.println(jugador1 + " diferencia: " + diferenciaJ1);
+        System.out.println(jugador2 + " diferencia: " + diferenciaJ2);
+
+        int[] puntos = new int[2];
+
+        if (diferenciaJ1 < diferenciaJ2) {
+
+            System.out.println("Gana " + jugador1);
+            puntos[0] = 1;
+
+        } else if (diferenciaJ2 < diferenciaJ1) {
+
+            System.out.println("Gana " + jugador2);
+            puntos[1] = 1;
+
+        } else {
+
+            System.out.println("Empate.");
+        }
+
+        return puntos;
+    }
+
+
+    // Funcion que permite a un jugador realizar cinco operaciones
+
+    static double jugarCifra(int[] numeros) {
+
+        System.out.println("Numeros disponibles:");
+
+        for (int i = 0; i < numeros.length; i++) {
+            System.out.println((i + 1) + ". " + numeros[i]);
+        }
+
+        int posicion;
+
+        do {
+
+            posicion = leerEntero("Selecciona el numero inicial (1-6): ");
+
+            if (posicion < 1 || posicion > 6) {
+                System.out.println("Posicion incorrecta.");
+            }
+
+        } while (posicion < 1 || posicion > 6);
+
+        double resultado = numeros[posicion - 1];
+
+        System.out.println("Resultado inicial: " + resultado);
+
+        // Realizar cinco operaciones
+        for (int i = 1; i <= 5; i++) {
+
+            System.out.println("\nOperacion " + i);
+
+            System.out.println("1. Sumar");
+            System.out.println("2. Restar");
+            System.out.println("3. Multiplicar");
+            System.out.println("4. Dividir");
+
+            int operacion;
+
+            do {
+
+                operacion = leerEntero("Selecciona una operacion: ");
+
+                if (operacion < 1 || operacion > 4) {
+                    System.out.println("Operacion incorrecta.");
+                }
+
+            } while (operacion < 1 || operacion > 4);
+
+            int indice;
+
+            do {
+
+                indice = leerEntero("Selecciona un numero auxiliar (1-6): ");
+
+                if (indice < 1 || indice > 6) {
+                    System.out.println("Numero incorrecto.");
+                }
+
+            } while (indice < 1 || indice > 6);
+
+            int auxiliar = numeros[indice - 1];
+
+            resultado = calcularOperacion(resultado, auxiliar, operacion);
+
+            System.out.println("Resultado actual: " + resultado);
+        }
+
+        return resultado;
+    }
+
+
+    // =====================================================
+    // 8. PRUEBA 2: LA PALABRA MAS LARGA
+    // =====================================================
+
+    static int[] pruebaPalabraMasLarga() {
+
+        System.out.println("\n======================================");
+        System.out.println("        LA PALABRA MAS LARGA");
+        System.out.println("======================================");
+
+        char[] letras = generarLetras(cantidadLetras);
+
+        System.out.println("Letras disponibles:");
+
+        for (int i = 0; i < letras.length; i++) {
+            System.out.print(letras[i] + " ");
+        }
+
+        System.out.println("\n");
+
+        // Turno del primer jugador
+        System.out.println("Turno de " + jugador1);
+
+        String palabraJ1 = leerTexto("Introduce tu palabra: ");
+
+        boolean letrasJ1 = puedeFormarse(palabraJ1, letras);
+
+        boolean validaJ1 = false;
+
+        if (letrasJ1) {
+
+            System.out.println(jugador2 + ", comprueba si la palabra existe en español.");
+
+            validaJ1 = confirmarPalabra();
+
+        } else {
+
+            System.out.println("La palabra no puede formarse con las letras disponibles.");
+        }
+
+        // Turno del segundo jugador
+        System.out.println("\nTurno de " + jugador2);
+
+        String palabraJ2 = leerTexto("Introduce tu palabra: ");
+
+        boolean letrasJ2 = puedeFormarse(palabraJ2, letras);
+
+        boolean validaJ2 = false;
+
+        if (letrasJ2) {
+
+            System.out.println(jugador1 + ", comprueba si la palabra existe en español.");
+
+            validaJ2 = confirmarPalabra();
+
+        } else {
+
+            System.out.println("La palabra no puede formarse con las letras disponibles.");
+        }
+
+        int longitudJ1 = 0;
+        int longitudJ2 = 0;
+
+        if (validaJ1) {
+            longitudJ1 = normalizarPalabra(palabraJ1).length();
+        }
+
+        if (validaJ2) {
+            longitudJ2 = normalizarPalabra(palabraJ2).length();
+        }
+
+        System.out.println("\nRESULTADOS:");
+
+        System.out.println(jugador1 + ": " + palabraJ1 + " (" + longitudJ1 + " letras)");
+
+        System.out.println(jugador2 + ": " + palabraJ2 + " (" + longitudJ2 + " letras)");
+
+        int[] puntos = new int[2];
+
+        if (longitudJ1 > longitudJ2) {
+
+            System.out.println("Gana " + jugador1);
+            puntos[0] = 1;
+
+        } else if (longitudJ2 > longitudJ1) {
+
+            System.out.println("Gana " + jugador2);
+            puntos[1] = 1;
+
+        } else {
+
+            System.out.println("Empate.");
+        }
+
+        return puntos;
+    }
+
+
+    // Generacion de letras con minimo cuatro vocales y cuatro consonantes
+
+    static char[] generarLetras(int cantidad) {
+
+        char[] letras = new char[cantidad];
+
+        String vocales = "AEIOU";
+
+        String consonantes = "BCDFGHJKLMNÑPQRSTVWXYZ";
+
+        // Garantizar cuatro vocales
+        for (int i = 0; i < 4; i++) {
+
+            int posicion = aleatorio.nextInt(vocales.length());
+
+            letras[i] = vocales.charAt(posicion);
+        }
+
+        // Garantizar cuatro consonantes
+        for (int i = 4; i < 8; i++) {
+
+            int posicion = aleatorio.nextInt(consonantes.length());
+
+            letras[i] = consonantes.charAt(posicion);
+        }
+
+        // Completar las letras restantes aleatoriamente
+        for (int i = 8; i < cantidad; i++) {
+
+            if (aleatorio.nextBoolean()) {
+
+                letras[i] = vocales.charAt(
+                    aleatorio.nextInt(vocales.length())
+                );
+
+            } else {
+
+                letras[i] = consonantes.charAt(
+                    aleatorio.nextInt(consonantes.length())
+                );
+            }
+        }
+
+        // Mezclar las letras para que no aparezcan agrupadas
+        for (int i = 0; i < letras.length; i++) {
+
+            int posicion = aleatorio.nextInt(letras.length);
+
+            char temporal = letras[i];
+
+            letras[i] = letras[posicion];
+
+            letras[posicion] = temporal;
+        }
+
+        return letras;
+    }
+
+
+    // Comprobar que una palabra puede formarse con las letras disponibles
+
+    static boolean puedeFormarse(String palabra, char[] letras) {
+
+        String palabraNormalizada = normalizarPalabra(palabra);
+
+        boolean[] utilizadas = new boolean[letras.length];
+
+        if (palabraNormalizada.length() > letras.length) {
+            return false;
+        }
+
+        for (int i = 0; i < palabraNormalizada.length(); i++) {
+
+            char letra = palabraNormalizada.charAt(i);
+
+            boolean encontrada = false;
+
+            // Buscar una letra disponible que coincida
+            for (int j = 0; j < letras.length; j++) {
+
+                char letraDisponible = normalizarPalabra(
+                    String.valueOf(letras[j])
+                ).charAt(0);
+
+                if (letra == letraDisponible && !utilizadas[j]) {
+
+                    utilizadas[j] = true;
+
+                    encontrada = true;
+
+                    break;
+                }
+            }
+
+            if (!encontrada) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+
+    // Normalizar palabras: mayusculas y vocales sin tilde
+
+    static String normalizarPalabra(String palabra) {
+
+        String texto = palabra.trim().toUpperCase();
+
+        texto = Normalizer.normalize(
+            texto,
+            Normalizer.Form.NFD
+        );
+
+        texto = texto.replaceAll("\\p{M}", "");
+
+        return texto;
+    }
+
+
+    // =====================================================
+    // 9. PRUEBA 3: LA CALCULADORA HUMANA
+    // =====================================================
+
+    static int[] pruebaCalculadoraHumana() {
+
+        System.out.println("\n======================================");
+        System.out.println("       LA CALCULADORA HUMANA");
+        System.out.println("======================================");
+
+        System.out.println("Cada jugador realizara "
+                + cantidadOperaciones + " operaciones.");
+
+        System.out.println("Cada fallo supone 20 segundos de penalizacion.");
+
+        System.out.println("\nTurno de " + jugador1);
+
+        double tiempoJ1 = jugarCalculadora();
+
+        System.out.println("\nTurno de " + jugador2);
+
+        double tiempoJ2 = jugarCalculadora();
+
+        System.out.println("\nRESULTADOS:");
+
+        System.out.printf("%s: %.2f segundos%n", jugador1, tiempoJ1);
+
+        System.out.printf("%s: %.2f segundos%n", jugador2, tiempoJ2);
+
+        int[] puntos = new int[2];
+
+        if (tiempoJ1 < tiempoJ2) {
+
+            System.out.println("Gana " + jugador1);
+            puntos[0] = 1;
+
+        } else if (tiempoJ2 < tiempoJ1) {
+
+            System.out.println("Gana " + jugador2);
+            puntos[1] = 1;
+
+        } else {
+
+            System.out.println("Empate.");
+        }
+
+        return puntos;
+    }
+
+
+    // Realizar las operaciones de un jugador
+
+    static double jugarCalculadora() {
+
+        double numeroActual = generarNumero(1, 100);
+
+        int fallos = 0;
+
+        System.out.println("Numero inicial: " + numeroActual);
+
+        long tiempoInicial = System.nanoTime();
+
+        for (int i = 1; i <= cantidadOperaciones; i++) {
+
+            int operacion = aleatorio.nextInt(4) + 1;
+
+            int valor;
+
+            if (operacion == 1 || operacion == 2) {
+
+                valor = generarNumero(10, 99);
+
+            } else {
+
+                valor = generarNumero(1, 9);
+            }
+
+            double resultadoCorrecto = calcularOperacion(
+                numeroActual,
+                valor,
+                operacion
+            );
+
+            System.out.println("\nOperacion " + i + " de "
+                    + cantidadOperaciones);
+
+            mostrarOperacion(operacion, numeroActual, valor);
+
+            double respuesta = leerDouble("Introduce el resultado: ");
+
+            if (Math.abs(respuesta - resultadoCorrecto) < 0.000001) {
+
+                System.out.println("Correcto.");
+
+            } else {
+
+                System.out.println("Incorrecto.");
+
+                System.out.println("El resultado correcto era: "
+                        + resultadoCorrecto);
+
+                fallos++;
+            }
+
+            // El resultado correcto pasa a ser el nuevo numero inicial
+            numeroActual = resultadoCorrecto;
+        }
+
+        long tiempoFinal = System.nanoTime();
+
+        double segundos = (tiempoFinal - tiempoInicial) / 1_000_000_000.0;
+
+        double penalizacion = fallos * 20.0;
+
+        double tiempoTotal = segundos + penalizacion;
+
+        System.out.println("\nFallos: " + fallos);
+
+        System.out.println("Penalizacion: " + penalizacion + " segundos");
+
+        System.out.printf("Tiempo real: %.2f segundos%n", segundos);
+
+        System.out.printf("Tiempo total: %.2f segundos%n", tiempoTotal);
+
+        return tiempoTotal;
+    }
+
+
+    // Mostrar la operacion correspondiente
+
+    static void mostrarOperacion(
+            int operacion,
+            double numero,
+            int valor) {
+
+        switch (operacion) {
+
+            case 1:
+                System.out.println(numero + " + " + valor);
+                break;
+
+            case 2:
+                System.out.println(numero + " - " + valor);
+                break;
+
+            case 3:
+                System.out.println(numero + " * " + valor);
+                break;
+
+            case 4:
+                System.out.println(numero + " / " + valor);
+                break;
+        }
+    }
+
+
+    // =====================================================
+    // 10. PRUEBA ORIGINAL: ORDEN EXPRES
+    // =====================================================
+
+    static int[] pruebaOrdenExpres() {
+
+        System.out.println("\n======================================");
+        System.out.println("             ORDEN EXPRES");
+        System.out.println("======================================");
+
+        System.out.println("Debes ordenar seis numeros de menor a mayor.");
+
+        int[] numeros = new int[6];
+
+        for (int i = 0; i < numeros.length; i++) {
+
+            numeros[i] = generarNumero(1, 99);
+        }
+
+        System.out.println("\nNumeros desordenados:");
+
+        for (int i = 0; i < numeros.length; i++) {
+
+            System.out.print(numeros[i] + " ");
+        }
+
+        // Crear una copia para obtener el orden correcto
+        int[] ordenados = new int[6];
+
+        for (int i = 0; i < numeros.length; i++) {
+
+            ordenados[i] = numeros[i];
+        }
+
+        // Ordenacion mediante el metodo burbuja
+        // Se utilizan dos bucles anidados
+
+        for (int i = 0; i < ordenados.length - 1; i++) {
+
+            for (int j = 0; j < ordenados.length - 1 - i; j++) {
+
+                if (ordenados[j] > ordenados[j + 1]) {
+
+                    int temporal = ordenados[j];
+
+                    ordenados[j] = ordenados[j + 1];
+
+                    ordenados[j + 1] = temporal;
+                }
+            }
+        }
+
+        System.out.println("\n\nTurno de " + jugador1);
+
+        int[] respuestaJ1 = introducirOrden();
+
+        System.out.println("\nTurno de " + jugador2);
+
+        int[] respuestaJ2 = introducirOrden();
+
+        int aciertosJ1 = contarAciertos(respuestaJ1, ordenados);
+
+        int aciertosJ2 = contarAciertos(respuestaJ2, ordenados);
+
+        System.out.println("\nRESULTADOS:");
+
+        mostrarArray(respuestaJ1);
+
+        System.out.println("Aciertos de " + jugador1 + ": " + aciertosJ1);
+
+        mostrarArray(respuestaJ2);
+
+        System.out.println("Aciertos de " + jugador2 + ": " + aciertosJ2);
+
+        System.out.println("Orden correcto:");
+
+        mostrarArray(ordenados);
+
+        int[] puntos = new int[2];
+
+        if (aciertosJ1 > aciertosJ2) {
+
+            System.out.println("Gana " + jugador1);
+            puntos[0] = 1;
+
+        } else if (aciertosJ2 > aciertosJ1) {
+
+            System.out.println("Gana " + jugador2);
+            puntos[1] = 1;
+
+        } else {
+
+            System.out.println("Empate.");
+        }
+
+        return puntos;
+    }
+
+
+    // Introducir seis numeros ordenados
+
+    static int[] introducirOrden() {
+
+        int[] respuesta = new int[6];
+
+        System.out.println("Introduce los seis numeros de menor a mayor:");
+
+        for (int i = 0; i < respuesta.length; i++) {
+
+            respuesta[i] = leerEntero("Numero " + (i + 1) + ": ");
+        }
+
+        return respuesta;
+    }
+
+
+    // Contar las posiciones correctas
+
+    static int contarAciertos(int[] respuesta, int[] solucion) {
+
+        int aciertos = 0;
+
+        for (int i = 0; i < respuesta.length; i++) {
+
+            if (respuesta[i] == solucion[i]) {
+
+                aciertos++;
+            }
+        }
+
+        return aciertos;
+    }
+
+
+    // Mostrar un vector
+
+    static void mostrarArray(int[] numeros) {
+
+        System.out.print("Secuencia: ");
+
+        for (int i = 0; i < numeros.length; i++) {
+
+            System.out.print(numeros[i] + " ");
+        }
+
+        System.out.println();
+    }
+
+
+    // =====================================================
+    // 11. FUNCIONES DE LOGICA MATEMATICA
+    // =====================================================
+
+    // Calcular una operacion matematica sin entrada ni salida
+
+    static double calcularOperacion(
+            double numero1,
+            double numero2,
+            int operacion) {
+
+        double resultado = 0;
+
+        switch (operacion) {
+
+            case 1:
+                resultado = numero1 + numero2;
+                break;
+
+            case 2:
+                resultado = numero1 - numero2;
+                break;
+
+            case 3:
+                resultado = numero1 * numero2;
+                break;
+
+            case 4:
+
+                if (numero2 != 0) {
+
+                    resultado = numero1 / numero2;
+
+                } else {
+
+                    throw new ArithmeticException("Division entre cero.");
+                }
+
+                break;
+        }
+
+        return resultado;
+    }
+
+
+    // Generar un numero aleatorio entre dos valores incluidos
+
+    static int generarNumero(int minimo, int maximo) {
+
+        return aleatorio.nextInt(maximo - minimo + 1) + minimo;
+    }
+
+
+    // =====================================================
+    // 12. CONFIGURACION
+    // =====================================================
+
+    static void mostrarConfiguracion() {
+
+        int opcion;
+
+        do {
+
+            System.out.println("\n======================================");
+            System.out.println("            CONFIGURACION");
+            System.out.println("======================================");
+
+            System.out.println("1. Cambiar repeticiones de las pruebas");
+            System.out.println("2. Cambiar cantidad de letras");
+            System.out.println("3. Cambiar cantidad de operaciones");
+            System.out.println("4. Ver configuracion actual");
+            System.out.println("5. Volver al menu principal");
+
+            opcion = leerEntero("Selecciona una opcion: ");
+
+            switch (opcion) {
+
+                case 1:
+
+                    int nuevasRepeticiones = leerEntero(
+                        "Numero de repeticiones (1-10): "
+                    );
+
+                    if (nuevasRepeticiones >= 1
+                            && nuevasRepeticiones <= 10) {
+
+                        repeticiones = nuevasRepeticiones;
+
+                        System.out.println("Configuracion actualizada.");
+
+                    } else {
+
+                        System.out.println("Valor incorrecto. Debe estar entre 1 y 10.");
+                    }
+
+                    break;
+
+                case 2:
+
+                    int nuevasLetras = leerEntero(
+                        "Cantidad de letras (8-20): "
+                    );
+
+                    if (nuevasLetras >= 8 && nuevasLetras <= 20) {
+
+                        cantidadLetras = nuevasLetras;
+
+                        System.out.println("Configuracion actualizada.");
+
+                    } else {
+
+                        System.out.println("Valor incorrecto. Debe estar entre 8 y 20.");
+                    }
+
+                    break;
+
+                case 3:
+
+                    int nuevasOperaciones = leerEntero(
+                        "Cantidad de operaciones (1-10): "
+                    );
+
+                    if (nuevasOperaciones >= 1
+                            && nuevasOperaciones <= 10) {
+
+                        cantidadOperaciones = nuevasOperaciones;
+
+                        System.out.println("Configuracion actualizada.");
+
+                    } else {
+
+                        System.out.println("Valor incorrecto. Debe estar entre 1 y 10.");
+                    }
+
+                    break;
+
+                case 4:
+
+                    mostrarValoresConfiguracion();
+                    break;
+
+                case 5:
+
+                    System.out.println("Volviendo al menu principal.");
+                    break;
+
+                default:
+
+                    System.out.println("Opcion incorrecta.");
+            }
+
+        } while (opcion != 5);
+    }
+
+
+    // Mostrar la configuracion actual
+
+    static void mostrarValoresConfiguracion() {
+
+        System.out.println("\nCONFIGURACION ACTUAL");
+
+        System.out.println("Repeticiones: " + repeticiones);
+
+        System.out.println("Cantidad de letras: " + cantidadLetras);
+
+        System.out.println("Cantidad de operaciones: "
+                + cantidadOperaciones);
+    }
+
+
+    // =====================================================
+    // 13. MARCADORES Y RESULTADOS
+    // =====================================================
+
+    static void mostrarMarcadorPrueba() {
+
+        System.out.println("\n--------------------------------------");
+
+        System.out.println("MARCADOR DE LA PRUEBA");
+
+        System.out.println(jugador1 + ": " + puntosPruebaJ1);
+
+        System.out.println(jugador2 + ": " + puntosPruebaJ2);
+
+        System.out.println("--------------------------------------");
+    }
+
+
+    static void mostrarMarcadorGlobal() {
+
+        System.out.println("\n======================================");
+
+        System.out.println("MARCADOR GLOBAL");
+
+        System.out.println(jugador1 + ": " + puntosGlobalesJ1);
+
+        System.out.println(jugador2 + ": " + puntosGlobalesJ2);
+
+        System.out.println("======================================");
+    }
+
+
+    static void mostrarResultadoConcurso() {
+
+        System.out.println("\n######################################");
+
+        System.out.println("        FINAL DEL CONCURSO");
+
+        System.out.println("######################################");
+
+        mostrarMarcadorGlobal();
+
+        if (puntosGlobalesJ1 > puntosGlobalesJ2) {
+
+            System.out.println("CAMPEON: " + jugador1);
+
+        } else if (puntosGlobalesJ2 > puntosGlobalesJ1) {
+
+            System.out.println("CAMPEON: " + jugador2);
+
+        } else {
+
+            System.out.println("EL CONCURSO HA TERMINADO EN EMPATE.");
+        }
+    }
+
+
+    // =====================================================
+    // 14. FUNCIONES DE ENTRADA Y SALIDA
+    // =====================================================
+
+    // Leer un numero entero controlando errores
+
+    static int leerEntero(String mensaje) {
+
+        while (true) {
+
+            System.out.print(mensaje);
+
+            String entrada = teclado.nextLine().trim();
+
+            try {
+
+                return Integer.parseInt(entrada);
+
+            } catch (NumberFormatException e) {
+
+                System.out.println("Error: debes introducir un numero entero.");
+            }
+        }
+    }
+
+
+    // Leer un numero decimal controlando errores
+
+    static double leerDouble(String mensaje) {
+
+        while (true) {
+
+            System.out.print(mensaje);
+
+            String entrada = teclado.nextLine().trim();
+
+            entrada = entrada.replace(',', '.');
+
+            try {
+
+                double numero = Double.parseDouble(entrada);
+
+                if (Double.isFinite(numero)) {
+                    return numero;
+                }
+
+                System.out.println("Introduce un numero valido.");
+
+            } catch (NumberFormatException e) {
+
+                System.out.println("Error: introduce un numero valido.");
+            }
+        }
+    }
+
+
+    // Leer una cadena de texto
+
+    static String leerTexto(String mensaje) {
+
+        String texto;
+
+        do {
+
+            System.out.print(mensaje);
+
+            texto = teclado.nextLine().trim();
+
+            if (texto.isEmpty()) {
+
+                System.out.println("No puedes dejar la respuesta vacia.");
+            }
+
+        } while (texto.isEmpty());
+
+        return texto;
+    }
+
+
+    // Confirmar si una palabra existe en español
+
+    static boolean confirmarPalabra() {
+
+        int opcion;
+
+        do {
+
+            System.out.println("1. La palabra existe en español.");
+            System.out.println("2. La palabra no existe.");
+
+            opcion = leerEntero("Selecciona una opcion: ");
+
+            if (opcion != 1 && opcion != 2) {
+
+                System.out.println("Opcion incorrecta.");
+            }
+
+        } while (opcion != 1 && opcion != 2);
+
+        return opcion == 1;
+    }
+
+}
